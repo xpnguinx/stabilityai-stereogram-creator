@@ -1,8 +1,9 @@
 # Stability AI Stereogram Creator
+<img width="1472" alt="Screenshot 2025-03-02 at 11 07 52 AM" src="https://github.com/user-attachments/assets/3e861dbd-4847-4d6d-9d43-73392691cb7e" />
 
 A powerful tool to create custom stereograms using AI-generated or custom images. This application leverages the Stability AI API to generate depth maps and patterns, allowing you to create stunning 3D stereogram illusions.
 
-![Stereogram Creator Interface](https://raw.githubusercontent.com/penguinlalo/stabilityai-stereogram-creator/main/screenshot.png)
+
 
 ## Features
 
