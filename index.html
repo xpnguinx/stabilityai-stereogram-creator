@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>pnguin stereogram v5.0 | P3N6U1N</title>
+  <style>
+    /* Reset defaults */
+    body, h2, h3, h4, label, button, input, textarea {
+      margin: 0;
+      padding: 0;
+      font-family: 'Source Code Pro', 'Courier New', monospace;
+      font-weight: 300;
+    }
+    :root {
+      --bg-color: #000;
+      --text-color: #ccc;
+      --accent-color: #555;
+      --border-color: #777;
+      --hover-color: #333;
+      --light-accent: #aaa;
+      --matrix-color: #ddd;
+      --success-color: #48a346;
+      --error-color: #a34846;
+      --sidebar-width: 340px;
+      --scrollbar-width: 6px;
+    }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+    .container {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      position: relative;
+    }
+    
+    /* Improved scrollbar styling */
+    ::-webkit-scrollbar {
+      width: var(--scrollbar-width);
+      height: var(--scrollbar-width);
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-color);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--accent-color);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--light-accent);
+    }
+    
+    /* Sidebar controls with improved layout */
+    .controls {
+      width: var(--sidebar-width);
+      background-color: var(--bg-color);
+      border-right: 2px solid var(--border-color);
+      height: 100%;
+      position: relative;
+      box-shadow: 0 0 10px var(--accent-color);
+    }
+    
+    .controls-inner {
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    
+    .controls h2, .controls h3, .controls h4 {
+      margin-bottom: 15px;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--light-accent);
+    }
+    
+    .controls h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+    
+    .controls h3 {
+      font-size: 18px;
+      margin-top: 25px;
+      background-color: var(--accent-color);
+      padding: 8px 5px;
+      border-radius: 3px;
+    }
+    
+    .controls h4 {
+      font-size: 16px;
+      margin-top: 15px;
+      color: var(--text-color);
+    }
+    
+    /* Collapsible sections */
+    .collapsible {
+      margin-bottom: 15px;
+    }
+    
+    .collapsible-header {
+      background-color: var(--accent-color);
+      padding: 8px 10px;
+      cursor: pointer;
+      border-radius: 3px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+    
+    .collapsible-header:hover {
+      background-color: var(--hover-color);
+    }
+    
+    .collapsible-header h3 {
+      margin: 0;
+      background-color: transparent;
+      padding: 0;
+    }
+    
+    .collapsible-header .toggle-icon {
+      transition: transform 0.3s;
+    }
+    
+    .collapsible-header.active .toggle-icon {
+      transform: rotate(180deg);
+    }
+    
+    .collapsible-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+      background-color: rgba(40, 40, 40, 0.5);
+      border-radius: 0 0 3px 3px;
+    }
+    
+    .collapsible-inner {
+      padding: 10px;
+    }
+    
+    .control-group {
+      margin-bottom: 15px;
+    }
+    
+    .control-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: var(--text-color);
+    }
+    
+    .control-group label .tooltip-icon {
+      display: inline-block;
+      margin-left: 5px;
+      width: 16px;
+      height: 16px;
+      background-color: var(--accent-color);
+      color: var(--text-color);
+      border-radius: 50%;
+      text-align: center;
+      line-height: 16px;
+      font-size: 12px;
+      cursor: help;
+      position: relative;
+    }
+    
+    .tooltip-text {
+      visibility: hidden;
+      width: 200px;
+      background-color: var(--accent-color);
+      color: var(--text-color);
+      text-align: center;
+      border-radius: 5px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-weight: normal;
+      text-transform: none;
+      font-size: 12px;
+      pointer-events: none;
+    }
+    
+    .tooltip-icon:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    input[type="file"], input[type="range"], textarea, select {
+      width: 100%;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      padding: 5px;
+      box-sizing: border-box;
+    }
+    
+    input[type="text"] {
+      width: 100%;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      padding: 5px;
+      box-sizing: border-box;
+    }
+    
+    input[type="range"] {
+      -webkit-appearance: none;
+      background: var(--accent-color);
+      height: 5px;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 15px;
+      height: 15px;
+      background: var(--light-accent);
+      cursor: pointer;
+      border-radius: 50%;
+    }
+    
+    .slider-value {
+      float: right;
+      font-weight: normal;
+      color: var(--text-color);
+    }
+    
+    /* Preview area with improved positioning */
+    .preview-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .preview-tabs {
+      display: flex;
+      background-color: var(--accent-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .preview-tab {
+      padding: 10px 15px;
+      cursor: pointer;
+      font-weight: bold;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+    
+    .preview-tab:hover {
+      background-color: var(--hover-color);
+    }
+    
+    .preview-tab.active {
+      background-color: var(--hover-color);
+      border-bottom: 2px solid var(--light-accent);
+    }
+    
+    .preview-content {
+      flex: 1;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      overflow: auto;
+      padding: 20px;
+    }
+    
+    .preview-content.active {
+      display: flex;
+    }
+    
+    .image-preview {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 100%;
+      max-height: 100%;
+    }
+    
+    .image-preview img {
+      max-width: 100%;
+      max-height: 80vh;
+      border: 2px solid var(--border-color);
+      box-shadow: 0 0 15px var(--accent-color);
+    }
+    
+    canvas {
+      max-width: 100%;
+      max-height: 85vh;
+      border: 2px solid var(--border-color);
+      box-shadow: 0 0 15px var(--accent-color);
+    }
+    
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background-color: var(--accent-color);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.3s;
+    }
+    
+    button:hover {
+      background-color: var(--hover-color);
+      color: var(--light-accent);
+      box-shadow: 0 0 10px var(--light-accent);
+    }
+    
+    .ai-option {
+      padding: 8px;
+      margin-top: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .ai-option:hover {
+      background-color: var(--hover-color);
+    }
+    
+    .ai-option input {
+      margin-right: 8px;
+    }
+    
+    .preview-thumbnail {
+      width: 100%;
+      height: 150px;
+      background-color: var(--bg-color);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 5px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .preview-thumbnail img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    
+    .preview-placeholder {
+      color: var(--accent-color);
+      text-align: center;
+      font-style: italic;
+    }
+    
+    #loading {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      border-radius: 10px;
+      z-index: 100;
+      text-align: center;
+    }
+    
+    #loading .spinner {
+      border: 5px solid var(--accent-color);
+      border-top: 5px solid var(--light-accent);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px auto;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    #matrixBg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+    }
+    
+    .modal > div {
+      background: var(--bg-color);
+      padding: 20px;
+      margin: 15% auto;
+      width: 80%;
+      max-width: 600px;
+      border: 2px solid var(--border-color);
+      box-shadow: 0 0 20px var(--accent-color);
+      color: var(--text-color);
+    }
+    
+    #notification {
+      display: none;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px;
+      background-color: var(--success-color);
+      color: white;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      z-index: 9999;
+    }
+    
+    #notification.error {
+      background-color: var(--error-color);
+    }
+    
+    /* Help button */
+    .help-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      background-color: var(--accent-color);
+      color: var(--text-color);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: bold;
+      z-index: 10;
+    }
+    
+    .help-button:hover {
+      background-color: var(--hover-color);
+      color: var(--light-accent);
+    }
+    
+    /* Responsive tweaks */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      
+      .controls {
+        width: 100%;
+        height: auto;
+        max-height: 50vh;
+        border-right: none;
+        border-bottom: 2px solid var(--border-color);
+      }
+      
+      .preview-container {
+        height: 50vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Matrix Rain Background -->
+  <canvas id="matrixBg"></canvas>
+  
+  <div id="notification"></div>
+  
+  <div class="container">
+    <!-- Sidebar Controls -->
+    <div class="controls">
+      <div class="controls-inner">
+        <h2>pnguin stereogram v5.0</h2>
+        
+        <div class="collapsible">
+          <div class="collapsible-header active">
+            <h3>Input Images</h3>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="collapsible-content" style="max-height: 1000px;">
+            <div class="collapsible-inner">
+              <div class="preview-tabs" style="margin-bottom: 15px;">
+                <div class="preview-tab active" data-input-tab="manual">Manual</div>
+                <div class="preview-tab" data-input-tab="ai">AI Gen</div>
+              </div>
+              
+              <!-- Manual Tab -->
+              <div id="manualInputTab" class="input-tab-content active">
+                <div class="control-group">
+                  <label for="depthMap">
+                    Depth Map [SYS_INPUT]
+                    <span class="tooltip-icon">?
+                      <span class="tooltip-text">Upload a grayscale image where white areas appear closer and black areas appear further away</span>
+                    </span>
+                  </label>
+                  <input type="file" id="depthMap" accept="image/*">
+                  <div class="preview-thumbnail" id="depthMapContainer">
+                    <div class="preview-placeholder">No depth map selected</div>
+                  </div>
+                </div>
+                
+                <div class="control-group">
+                  <label for="pattern">
+                    Pattern [CRYPT_SRC]
+                    <span class="tooltip-icon">?
+                      <span class="tooltip-text">Upload a repeating pattern image that will be used to create the stereogram</span>
+                    </span>
+                  </label>
+                  <input type="file" id="pattern" accept="image/*">
+                  <div class="preview-thumbnail" id="patternContainer">
+                    <div class="preview-placeholder">No pattern selected</div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- AI Tab -->
+              <div id="aiInputTab" class="input-tab-content" style="display: none;">
+                <div class="control-group">
+                  <label for="aiPrompt">
+                    AI Prompt
+                    <span class="tooltip-icon">?
+                      <span class="tooltip-text">Describe what you want the AI to generate</span>
+                    </span>
+                  </label>
+                  <textarea id="aiPrompt" rows="3" placeholder="Describe what you want to generate..."></textarea>
+                </div>
+                
+                <div class="control-group">
+                  <label>Generate As:</label>
+                  <div class="ai-option">
+                    <input type="radio" id="genDepthMap" name="genType" value="depthMap" checked>
+                    <label for="genDepthMap">Depth Map</label>
+                  </div>
+                  <div class="ai-option">
+                    <input type="radio" id="genPattern" name="genType" value="pattern">
+                    <label for="genPattern">Pattern</label>
+                  </div>
+                </div>
+                
+                <div class="control-group">
+                  <button id="generateAIBtn">Generate with AI</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="collapsible">
+          <div class="collapsible-header">
+            <h3>Stereogram Settings</h3>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="collapsible-content">
+            <div class="collapsible-inner">
+              <div class="control-group">
+                <label for="shiftStrength">
+                  Shift Strength <span id="shiftStrengthValue" class="slider-value">10</span>
+                  <span class="tooltip-icon">?
+                    <span class="tooltip-text">Controls the depth effect intensity - higher values create more pronounced 3D effect</span>
+                  </span>
+                </label>
+                <input type="range" id="shiftStrength" min="0" max="50" value="10">
+              </div>
+              
+              <div class="control-group">
+                <label for="patternScale">
+                  Pattern Scale <span id="patternScaleValue" class="slider-value">1</span>
+                  <span class="tooltip-icon">?
+                    <span class="tooltip-text">Adjusts the size of the repeating pattern</span>
+                  </span>
+                </label>
+                <input type="range" id="patternScale" min="0.5" max="2" step="0.1" value="1">
+              </div>
+              
+              <div class="control-group">
+                <label for="depthContrast">
+                  Depth Contrast <span id="depthContrastValue" class="slider-value">1</span>
+                  <span class="tooltip-icon">?
+                    <span class="tooltip-text">Enhances or reduces the contrast in the depth map</span>
+                  </span>
+                </label>
+                <input type="range" id="depthContrast" min="0.1" max="2" step="0.1" value="1">
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="collapsible">
+          <div class="collapsible-header">
+            <h3>Steganography</h3>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="collapsible-content">
+            <div class="collapsible-inner">
+              <div class="control-group">
+                <label for="hiddenMessage">
+                  Hidden Payload [SHADOW_DATA]
+                  <span class="tooltip-icon">?
+                    <span class="tooltip-text">Secret message to embed within the stereogram image</span>
+                  </span>
+                </label>
+                <textarea id="hiddenMessage" rows="3" placeholder="Enter cryptic payload..."></textarea>
+                <label><input type="checkbox" id="enableStego" checked> Enable Steganography</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="collapsible">
+          <div class="collapsible-header">
+            <h3>Output Settings</h3>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="collapsible-content">
+            <div class="collapsible-inner">
+              <div class="control-group">
+                <label for="formatSelect">Output Format</label>
+                <select id="formatSelect">
+                  <option value="png">PNG</option>
+                  <option value="jpeg">JPEG</option>
+                </select>
+                <div id="jpegQualityGroup" style="display:none;">
+                  <label for="jpegQuality">JPEG Quality <span id="jpegQualityValue">0.8</span></label>
+                  <input type="range" id="jpegQuality" min="0" max="1" step="0.1" value="0.8">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="collapsible">
+          <div class="collapsible-header">
+            <h3>API Settings</h3>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="collapsible-content">
+            <div class="collapsible-inner">
+              <div class="control-group">
+                <label for="apiKey">Stability AI API Key</label>
+                <input type="text" id="apiKey" placeholder="Enter your API key...">
+                <small>Default key: ENTER-API-KEY-HERE</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="control-group" style="margin-top: 20px;">
+          <button id="generateBtn">Execute Stereogram</button>
+          <button id="downloadBtn">Extract Output</button>
+          <button id="decodeHiddenBtn">Decrypt Payload</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Main Preview Area -->
+    <div class="preview-container">
+      <div class="preview-tabs">
+        <div class="preview-tab active" data-preview="result">Final Result</div>
+        <div class="preview-tab" data-preview="depth">Depth Map</div>
+        <div class="preview-tab" data-preview="pattern">Pattern</div>
+      </div>
+      
+      <div id="resultPreview" class="preview-content active">
+        <div class="image-preview">
+          <canvas id="stereogramCanvas"></canvas>
+        </div>
+      </div>
+      
+      <div id="depthPreview" class="preview-content">
+        <div class="image-preview">
+          <img id="depthPreviewImg" style="display: none;">
+          <div id="depthPlaceholder" class="preview-placeholder">No depth map available</div>
+        </div>
+      </div>
+      
+      <div id="patternPreview" class="preview-content">
+        <div class="image-preview">
+          <img id="patternPreviewImg" style="display: none;">
+          <div id="patternPlaceholder" class="preview-placeholder">No pattern available</div>
+        </div>
+      </div>
+      
+      <div id="loading">
+        <div class="spinner"></div>
+        <div id="loadingText">[SYS] Processing...</div>
+      </div>
+      
+      <div class="help-button" id="helpButton">?</div>
+    </div>
+  </div>
+
+  <!-- Decode Modal -->
+  <div id="decodeModal" class="modal">
+    <div>
+      <h2>Decrypt Hidden Payload</h2>
+      <input type="file" id="decodeImage" accept="image/*">
+      <button id="decodeBtn">Run Decryptor</button>
+      <textarea id="decodedMessage" rows="5" readonly placeholder="Decrypted data will appear here..."></textarea>
+      <button id="closeDecodeModal">Exit</button>
+    </div>
+  </div>
+  
+  <!-- Help Modal -->
+  <div id="helpModal" class="modal">
+    <div>
+      <h2>Stereogram Guide</h2>
+      <p>Stereograms are images that create the illusion of 3D when viewed correctly. To see the 3D effect:</p>
+      <ol>
+        <li>Position your face close to the screen</li>
+        <li>Relax your eyes as if looking through the image at a distant point</li>
+        <li>Slowly move back from the screen while maintaining the relaxed gaze</li>
+        <li>The hidden 3D image should gradually appear</li>
+      </ol>
+      <h3>Controls Explained</h3>
+      <p><strong>Depth Map:</strong> Controls which parts of the image appear to be closer or further away. White areas appear closest, black areas furthest.</p>
+      <p><strong>Pattern:</strong> The repeating texture used to create the stereogram effect.</p>
+      <p><strong>Shift Strength:</strong> Controls how pronounced the 3D effect is. Higher values create more depth but may be harder to view.</p>
+      <p><strong>AI Generation:</strong> Creates depth maps or patterns using Stability AI.</p>
+      <p><strong>Steganography:</strong> Hides secret messages within the image that can be extracted later.</p>
+      <button id="closeHelpModal">Close Guide</button>
+    </div>
+  </div>
+
+  <!-- Load API handler first, then stereogram.js -->
+  <script src="api-handler.js"></script>
+  <script src="stereogram.js"></script>
+</body>
+</html>
