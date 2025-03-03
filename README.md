@@ -14,7 +14,7 @@ A powerful tool to create custom stereograms using AI-generated or custom images
 - **Multiple output formats** including PNG and JPEG
 - **Decode functionality** to extract hidden messages from stereograms
 
-## Getting Started
+## Getting Started 
 
 ### Prerequisites
 
