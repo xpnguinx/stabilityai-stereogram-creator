@@ -10,7 +10,7 @@ A powerful tool to create custom stereograms using AI-generated or custom images
 - **Create stereograms** from depth maps and pattern images
 - **AI-powered generation** of depth maps and pattern textures using Stability AI
 - **Steganography support** to hide secret messages in your stereograms
-- **Custom settings** to adjust depth effect, pattern scale, and contrast
+- **Custom settings** to adjust depth effect, pattern scale, and contrast 
 - **Multiple output formats** including PNG and JPEG
 - **Decode functionality** to extract hidden messages from stereograms
 
